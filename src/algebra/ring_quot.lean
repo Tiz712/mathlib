@@ -88,15 +88,20 @@ instance {R : Type u₁} [comm_ring R] (r : R → R → Prop) : comm_ring (ring_
 { .. (ring_quot.comm_semiring r),
   .. (ring_quot.ring r) }
 
-instance (s : A → A → Prop) : algebra S (ring_quot s) :=
+instance (s : A → A → Prop) : semimodule S (ring_quot s) :=
 { smul      := λ r, quot.map ((•) r) (rel.smul r),
-  to_fun    := λ r, quot.mk _ (algebra_map S A r),
-  map_one'  := congr_arg (quot.mk _) (ring_hom.map_one _),
-  map_mul'  := λ r s, congr_arg (quot.mk _) (ring_hom.map_mul _ _ _),
-  map_zero' := congr_arg (quot.mk _) (ring_hom.map_zero _),
-  map_add'  := λ r s, congr_arg (quot.mk _) (ring_hom.map_add _ _ _),
-  commutes' := λ r, by { rintro ⟨a⟩, exact congr_arg (quot.mk _) (algebra.commutes _ _) },
-  smul_def' := λ r, by { rintro ⟨a⟩, exact congr_arg (quot.mk _) (algebra.smul_def _ _) }, }
+  one_smul  := by { rintros ⟨⟩, exact congr_arg (quot.mk _) (one_smul _ _), },
+  mul_smul  := by { rintros x y ⟨⟩, exact congr_arg (quot.mk _) (mul_smul _ _ _), },
+  smul_add  := by { rintros x ⟨⟩ ⟨⟩, exact congr_arg (quot.mk _) (smul_add _ _ _), },
+  add_smul  := by { rintros x y ⟨⟩, exact congr_arg (quot.mk _) (add_smul _ _ _), },
+  smul_zero := λ x, congr_arg (quot.mk _) (smul_zero _),
+  zero_smul := by { rintros ⟨⟩, exact congr_arg (quot.mk _) (zero_smul _ _), }, }
+
+instance (s : A → A → Prop) : algebra S (ring_quot s) :=
+{ smul_mul_assoc' :=
+    by { rintros x ⟨⟩ ⟨⟩, exact congr_arg (quot.mk _) (algebra.smul_mul_assoc _ _ _), },
+  mul_smul_comm'  :=
+    by { rintros x ⟨⟩ ⟨⟩, exact congr_arg (quot.mk _) (algebra.mul_smul_comm _ _ _), }, }
 
 instance (r : R → R → Prop) : inhabited (ring_quot r) := ⟨0⟩
 

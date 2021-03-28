@@ -691,11 +691,8 @@ def C : 𝕜 →+* (α →ᵇ γ) :=
   map_add'  := λ c₁ c₂, ext $ λ x, (algebra_map 𝕜 γ).map_add _ _ }
 
 instance : algebra 𝕜 (α →ᵇ γ) :=
-{ to_ring_hom := C,
-  commutes' := λ c f, ext $ λ x, algebra.commutes' _ _,
-  smul_def' := λ c f, ext $ λ x, algebra.smul_def' _ _,
-  ..bounded_continuous_function.semimodule,
-  ..bounded_continuous_function.ring }
+{ smul_mul_assoc' := λ t f g, by { ext, simp only [coe_mul, coe_smul, algebra.smul_mul_assoc], },
+  mul_smul_comm'  := λ t f g, by { ext, simp only [coe_mul, algebra.mul_smul_comm, coe_smul], }, }
 
 instance [nonempty α] : normed_algebra 𝕜 (α →ᵇ γ) :=
 { norm_algebra_map_eq := λ c, begin

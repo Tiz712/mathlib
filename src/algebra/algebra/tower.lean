@@ -83,7 +83,7 @@ of_algebra_map_eq $ ring_hom.ext_iff.1 h
 variables (R S A)
 
 instance subalgebra (S₀ : subalgebra R S) : is_scalar_tower S₀ S A :=
-of_algebra_map_eq $ λ x, rfl
+of_algebra_map_eq $ λ x, sorry
 
 variables [algebra R A] [algebra R B]
 variables [is_scalar_tower R S A] [is_scalar_tower R S B]

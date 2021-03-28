@@ -135,43 +135,49 @@ by refine_struct
     one := 1 };
   intros; ext; simp; ring_exp
 
-instance : algebra R ℍ[R, c₁, c₂] :=
-{ smul := λ r a, ⟨r * a.1, r * a.2, r * a.3, r * a.4⟩,
-  to_fun := coe,
-  map_one' := rfl,
-  map_zero' := rfl,
-  map_mul' := λ x y, by ext; simp,
-  map_add' := λ x y, by ext; simp,
-  smul_def' := λ r x, by ext; simp,
-  commutes' := λ r x, by ext; simp [mul_comm] }
+instance : semimodule R ℍ[R, c₁, c₂] :=
+{ smul      := λ r a, ⟨r * a.1, r * a.2, r * a.3, r * a.4⟩,
+  one_smul  := λ a, by ext; simp,
+  mul_smul  := λ t a b, by ext; simp [mul_assoc],
+  smul_add  := λ t a b, by ext; simp [mul_add],
+  add_smul  := λ t a b, by ext; simp [add_mul],
+  smul_zero := λ a, by ext; simp,
+  zero_smul := λ a, by ext; simp, }
 
 @[simp] lemma smul_re : (r • a).re = r • a.re := rfl
 @[simp] lemma smul_im_i : (r • a).im_i = r • a.im_i := rfl
 @[simp] lemma smul_im_j : (r • a).im_j = r • a.im_j := rfl
 @[simp] lemma smul_im_k : (r • a).im_k = r • a.im_k := rfl
 
+instance : algebra R ℍ[R, c₁, c₂] :=
+{ smul_mul_assoc' := λ t a b, by
+  { ext; simp [left_distrib, mul_sub_left_distrib, ← mul_assoc, mul_comm _ t], },
+  mul_smul_comm'  := λ t a b, by
+  { ext; simp [left_distrib, mul_sub_left_distrib, ← mul_assoc, mul_comm _ t], }, }
+
 @[norm_cast, simp] lemma coe_add : ((x + y : R) : ℍ[R, c₁, c₂]) = x + y :=
-(algebra_map R ℍ[R, c₁, c₂]).map_add x y
+by ext; simp
 
 @[norm_cast, simp] lemma coe_sub : ((x - y : R) : ℍ[R, c₁, c₂]) = x - y :=
-(algebra_map R ℍ[R, c₁, c₂]).map_sub x y
+by ext; simp
 
 @[norm_cast, simp] lemma coe_neg : ((-x : R) : ℍ[R, c₁, c₂]) = -x :=
-(algebra_map R ℍ[R, c₁, c₂]).map_neg x
+by ext; simp
 
 @[norm_cast, simp] lemma coe_mul : ((x * y : R) : ℍ[R, c₁, c₂]) = x * y :=
-(algebra_map R ℍ[R, c₁, c₂]).map_mul x y
+by ext; simp
 
-lemma coe_commutes : ↑r * a = a * r := algebra.commutes r a
+lemma coe_commutes : ↑r * a = a * r := by ext; simp [mul_comm]
 
 lemma coe_commute : commute ↑r a := coe_commutes r a
 
-lemma coe_mul_eq_smul : ↑r * a = r • a := (algebra.smul_def r a).symm
+lemma coe_mul_eq_smul : ↑r * a = r • a := by ext; simp
 
 lemma mul_coe_eq_smul : a * r = r • a :=
 by rw [← coe_commutes, coe_mul_eq_smul]
 
-@[norm_cast, simp] lemma coe_algebra_map : ⇑(algebra_map R ℍ[R, c₁, c₂]) = coe := rfl
+@[norm_cast, simp] lemma coe_algebra_map : ⇑(algebra_map R ℍ[R, c₁, c₂]) = coe :=
+by ext; simp [algebra_map_def]
 
 lemma smul_coe : x • (y : ℍ[R, c₁, c₂]) = ↑(x * y) := by rw [coe_mul, coe_mul_eq_smul]
 
@@ -378,7 +384,8 @@ lemma coe_mul_eq_smul : ↑r * a = r • a := quaternion_algebra.coe_mul_eq_smul
 
 lemma mul_coe_eq_smul : a * r = r • a := quaternion_algebra.mul_coe_eq_smul r a
 
-@[simp] lemma algebra_map_def : ⇑(algebra_map R ℍ[R]) = coe := rfl
+@[simp] lemma algebra_map_def : ⇑(algebra_map R ℍ[R]) = coe :=
+quaternion_algebra.coe_algebra_map
 
 lemma smul_coe : x • (y : ℍ[R]) = ↑(x * y) := quaternion_algebra.smul_coe x y
 

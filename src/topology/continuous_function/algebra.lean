@@ -254,6 +254,13 @@ instance continuous_has_scalar {α : Type*} [topological_space α]
   has_scalar R { f : α → M | continuous f } :=
 ⟨λ r f, ⟨r • f, f.property.const_smul r⟩⟩
 
+@[simp] lemma continuous_coe_smul {α : Type*} [topological_space α]
+  {R : Type*} [semiring R] [topological_space R]
+  {M : Type*} [topological_space M] [add_comm_group M]
+  [semimodule R M] [topological_semimodule R M]
+  (f : { f : α → M | continuous f }) (r : R) :
+  ↑(r • f) = r • (f : α → M) := rfl
+
 instance continuous_semimodule {α : Type*} [topological_space α]
 {R : Type*} [semiring R] [topological_space R]
 {M : Type*} [topological_space M] [add_comm_group M] [topological_add_group M]
@@ -331,11 +338,8 @@ def continuous.C : R →+* { f : α → A | continuous f } :=
 variables [topological_space R] [has_continuous_smul R A]
 
 instance : algebra R { f : α → A | continuous f } :=
-{ to_ring_hom := continuous.C,
-  commutes' := λ c f, by ext x; exact algebra.commutes' _ _,
-  smul_def' := λ c f, by ext x; exact algebra.smul_def' _ _,
-  ..continuous_semimodule,
-  ..continuous_ring }
+{ smul_mul_assoc' := λ t f g, by { ext, simpa, },
+  mul_smul_comm'  := λ t f g, by { ext, simpa, }, }
 
 /- TODO: We are assuming `A` to be a ring and not a semiring just because there is not yet an
 instance of semiring. In turn, we do not want to define yet an instance of semiring because there is
@@ -368,10 +372,8 @@ rfl
 variables [topological_space R] [has_continuous_smul R A]
 
 instance continuous_map_algebra : algebra R C(α, A) :=
-{ to_ring_hom := continuous_map.C,
-  commutes' := λ c f, by ext x; exact algebra.commutes' _ _,
-  smul_def' := λ c f, by ext x; exact algebra.smul_def' _ _,
-  ..continuous_map_semiring }
+{ smul_mul_assoc' := λ t f g, by { ext, simp, },
+  mul_smul_comm'  := λ t f g, by { ext, simp, }, }
 
 /--
 A version of `separates_points` for subalgebras of the continuous functions,

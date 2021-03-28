@@ -27,15 +27,17 @@ section
 variables [decidable_eq n]
 
 instance : algebra R (matrix n n A) :=
-{ commutes' := λ r x,
-  begin ext, simp [matrix.scalar, matrix.mul_apply, matrix.one_apply, algebra.commutes], end,
-  smul_def' := λ r x, begin ext, simp [matrix.scalar, algebra.smul_def'' r], end,
-  ..((matrix.scalar n).comp (algebra_map R A)) }
+{ smul_mul_assoc' := λ t a b, by
+  { ext, simp only [matrix.mul_apply, pi.smul_apply, mul_eq_mul, algebra.smul_mul_assoc,
+      finset.smul_sum], },
+  mul_smul_comm'  := λ t a b, by
+   { ext, simp only [matrix.mul_apply, pi.smul_apply, mul_eq_mul, algebra.mul_smul_comm,
+      finset.smul_sum], }, }
 
 lemma algebra_map_matrix_apply {r : R} {i j : n} :
   algebra_map R (matrix n n A) r i j = if i = j then algebra_map R A r else 0 :=
 begin
-  dsimp [algebra_map, algebra.to_ring_hom, matrix.scalar],
+  simp [algebra_map_def],
   split_ifs with h; simp [h, matrix.one_apply_ne],
 end
 end

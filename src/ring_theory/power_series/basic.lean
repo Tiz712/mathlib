@@ -443,18 +443,23 @@ section algebra
 variables {A : Type*} [comm_semiring R] [semiring A] [algebra R A]
 
 instance : algebra R (mv_power_series σ A) :=
-{ commutes' := λ a φ, by { ext n, simp [algebra.commutes] },
-  smul_def' := λ a σ, by { ext n, simp [(coeff A n).map_smul_of_tower a, algebra.smul_def] },
-  to_ring_hom := (mv_power_series.map σ (algebra_map R A)).comp (C σ R),
+{ smul_mul_assoc' := λ t φ₁ φ₂, by { ext, simp only [linear_map.map_smul_of_tower, coeff_mul,
+    algebra.smul_mul_assoc, finset.smul_sum], },
+  mul_smul_comm'  := λ t φ₁ φ₂, by { ext, simp only [linear_map.map_smul_of_tower, coeff_mul,
+    algebra.mul_smul_comm, finset.smul_sum], },
   .. mv_power_series.semimodule }
 
-theorem C_eq_algebra_map : C σ R = (algebra_map R (mv_power_series σ R)) := rfl
+theorem C_eq_algebra_map : C σ R = (algebra_map R (mv_power_series σ R)) :=
+by { ext, simp only [algebra_map_def, coeff_smul, coeff_C, coeff_one, mul_boole], }
 
 theorem algebra_map_apply {r : R} :
   algebra_map R (mv_power_series σ A) r = C σ A (algebra_map R A r) :=
 begin
-  change (mv_power_series.map σ (algebra_map R A)).comp (C σ R) r = _,
-  simp,
+  ext,
+  simp only [linear_map.map_smul_of_tower, algebra_map_def, coeff_C, coeff_one],
+  split_ifs,
+  { refl, },
+  { exact smul_zero r, },
 end
 
 instance [nonempty σ] [nontrivial R] : nontrivial (subalgebra R (mv_power_series σ R)) :=
@@ -1317,7 +1322,14 @@ end local_ring
 section algebra
 variables {A : Type*} [comm_semiring R] [semiring A] [algebra R A]
 
-theorem C_eq_algebra_map {r : R} : C R r = (algebra_map R (power_series R)) r := rfl
+theorem C_eq_algebra_map {r : R} : C R r = (algebra_map R (power_series R)) r :=
+begin
+  ext,
+  simp only [linear_map.map_smul_of_tower, algebra_map_def, coeff_C, coeff_one],
+  split_ifs,
+  { simp only [algebra.id.smul_eq_mul, mul_one], },
+  { simp only [algebra.id.smul_eq_mul, mul_zero], },
+end
 
 theorem algebra_map_apply {r : R} :
   algebra_map R (power_series A) r = C A (algebra_map R A r) :=

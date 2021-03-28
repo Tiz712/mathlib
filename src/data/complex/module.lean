@@ -74,10 +74,10 @@ instance [semiring R] [semimodule R ℝ] : semimodule R ℂ :=
   zero_smul := λ r, by ext; simp [smul_re, smul_im, zero_smul] }
 
 instance [comm_semiring R] [algebra R ℝ] : algebra R ℂ :=
-{ smul := (•),
-  smul_def' := λ r x, by ext; simp [smul_re, smul_im, algebra.smul_def],
-  commutes' := λ r ⟨xr, xi⟩, by ext; simp [smul_re, smul_im, algebra.commutes],
-  ..complex.of_real.comp (algebra_map R ℝ) }
+{ smul_mul_assoc' := λ t a b,by { ext;
+    simp only [smul_re, smul_im, mul_re, mul_im, smul_add, smul_sub, algebra.smul_mul_assoc], },
+  mul_smul_comm'  := λ t a b, by { ext;
+    simp only [smul_re, smul_im, mul_re, mul_im, smul_add, smul_sub, algebra.mul_smul_comm], }, }
 
 section
 open_locale complex_order
@@ -111,7 +111,8 @@ localized "attribute [instance] complex_ordered_semimodule" in complex_order
 end
 
 
-@[simp] lemma coe_algebra_map : ⇑(algebra_map ℝ ℂ) = complex.of_real := rfl
+@[simp] lemma coe_algebra_map : ⇑(algebra_map ℝ ℂ) = complex.of_real :=
+by ext; simp only [algebra_map_def, of_real, mul_one, ring_hom.coe_mk, smul_coe]
 
 open submodule finite_dimensional
 

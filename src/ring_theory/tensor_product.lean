@@ -181,23 +181,8 @@ def tensor_algebra_map : R →+* (A ⊗[R] B) :=
   map_add' := by simp [add_tmul], }
 
 instance : algebra R (A ⊗[R] B) :=
-{ commutes' := λ r x,
-  begin
-    apply tensor_product.induction_on x,
-    { simp, },
-    { intros a b, simp [tensor_algebra_map, algebra.commutes], },
-    { intros y y' h h', simp at h h', simp [mul_add, add_mul, h, h'], },
-  end,
-  smul_def' := λ r x,
-  begin
-    apply tensor_product.induction_on x,
-    { simp [smul_zero], },
-    { intros a b,
-      rw [tensor_algebra_map, ←tmul_smul, ←smul_tmul, algebra.smul_def r a],
-      simp, },
-    { intros, dsimp, simp [smul_add, mul_add, *], },
-  end,
-  .. tensor_algebra_map,
+{ smul_mul_assoc' := λ r x y, show mul (r • x) y = r • mul x y, by simp,
+  mul_smul_comm'  := λ r x y, show mul x (r • y) = r • mul x y, by simp,
   .. (by apply_instance : semimodule R (A ⊗[R] B)) }.
 
 @[simp]
@@ -419,7 +404,7 @@ The base ring is a left identity for the tensor product of algebra, up to algebr
 -/
 protected def lid : R ⊗[R] A ≃ₐ[R] A :=
 alg_equiv_of_linear_equiv_tensor_product (tensor_product.lid R A)
-(by simp [mul_smul]) (by simp [algebra.smul_def])
+(by simp [mul_smul, algebra.mul_smul_comm, algebra.smul_mul_assoc]) (by simp [algebra.smul_def])
 
 @[simp] theorem lid_tmul (r : R) (a : A) :
   (tensor_product.lid R A : (R ⊗ A → A)) (r ⊗ₜ a) = r • a :=
@@ -430,7 +415,7 @@ The base ring is a right identity for the tensor product of algebra, up to algeb
 -/
 protected def rid : A ⊗[R] R ≃ₐ[R] A :=
 alg_equiv_of_linear_equiv_tensor_product (tensor_product.rid R A)
-(by simp [mul_smul]) (by simp [algebra.smul_def])
+(by simp [mul_smul, algebra.mul_smul_comm, algebra.smul_mul_assoc]) (by simp [algebra.smul_def])
 
 @[simp] theorem rid_tmul (r : R) (a : A) :
   (tensor_product.rid R A : (A ⊗ R → A)) (a ⊗ₜ r) = r • a :=

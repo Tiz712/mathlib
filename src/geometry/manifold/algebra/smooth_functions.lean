@@ -196,12 +196,8 @@ def smooth_map.C : 𝕜 →+* C^∞⟮I, N; 𝓘(𝕜, A), A⟯ :=
   map_add'  := λ c₁ c₂, by ext x; exact (algebra_map 𝕜 A).map_add _ _ }
 
 instance : algebra 𝕜 C^∞⟮I, N; 𝓘(𝕜, A), A⟯ :=
-{ smul := λ r f,
-  ⟨r • f, smooth_const.smul f.smooth⟩,
-  to_ring_hom := smooth_map.C,
-  commutes' := λ c f, by ext x; exact algebra.commutes' _ _,
-  smul_def' := λ c f, by ext x; exact algebra.smul_def' _ _,
-  ..smooth_map_semiring }
+{ smul_mul_assoc' := λ t f g, by { ext, simp, },
+  mul_smul_comm'  := λ t f g, by { ext, simp, }, }
 
 end algebra_structure
 

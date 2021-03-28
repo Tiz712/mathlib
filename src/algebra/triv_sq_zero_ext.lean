@@ -256,10 +256,11 @@ section algebra
 variables (R : Type u) (M : Type v)
 
 instance [comm_semiring R] [add_comm_monoid M] [semimodule R M] : algebra R (tsze R M) :=
-{ commutes' := λ r x, mul_comm _ _,
-  smul_def' := λ r x, ext rfl $ show r • x.2 = r • x.2 + x.1 • 0, by rw [smul_zero, add_zero],
-  .. triv_sq_zero_ext.semimodule R M,
-  .. triv_sq_zero_ext.inl_hom R M }
+{ smul_mul_assoc' := λ t a b, by
+  { ext, { simp [mul_assoc], }, { simp [mul_smul, smul_comm _ t], }, },
+  mul_smul_comm'  := λ t a b, by
+  { ext, { simp [← mul_assoc, mul_comm _ t], }, { simp [mul_smul, smul_comm _ t], }, },
+  .. triv_sq_zero_ext.semimodule R M, }
 
 /-- The canonical `R`-algebra projection `triv_sq_zero_ext R M → R`. -/
 def fst_hom [comm_semiring R] [add_comm_monoid M] [semimodule R M] : tsze R M →ₐ[R] R :=
@@ -268,7 +269,7 @@ def fst_hom [comm_semiring R] [add_comm_monoid M] [semimodule R M] : tsze R M �
   map_mul' := fst_mul R M,
   map_zero' := fst_zero R M,
   map_add' := fst_add R M,
-  commutes' := fst_inl }
+  commutes' := λ t, by simp [algebra_map_def], }
 
 /-- The canonical `R`-module projection `triv_sq_zero_ext R M → M`. -/
 @[simps apply]
